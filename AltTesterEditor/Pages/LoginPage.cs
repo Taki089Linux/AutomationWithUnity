@@ -1,5 +1,7 @@
 using AltTester.AltTesterUnitySDK.Driver;
 using NUnit.Framework;
+using System;
+using UnityEngine.UIElements;
 
 public class LoginPage : BasePage
 {
@@ -9,11 +11,20 @@ public class LoginPage : BasePage
 
     public LoginPage Login(UserModel user)
     {
-        altDriver.WaitForObject(By.NAME, loginPagePOM.Txt_Login).SetText(user.Username ?? "");
-        altDriver.FindObject(By.NAME, loginPagePOM.Txt_Password).SetText(user.Password ?? "");
 
-        altDriver.FindObject(By.NAME, loginPagePOM.Btn_Login).Click();
+        EnterCredential(user);
+        var loginButton = altDriver.FindObject(By.NAME, loginPagePOM.Btn_Login);
+        loginButton.Click();
+
         return this;
+    }
+
+    private void EnterCredential(UserModel user)
+    {
+        var loginField = altDriver.WaitForObject(By.NAME, loginPagePOM.Txt_Login, timeout: 5);
+        var passwordField = altDriver.FindObject(By.NAME, loginPagePOM.Txt_Password);
+        if (!string.IsNullOrEmpty(user.Username)) loginField.SetText(user.Username);
+        if (!string.IsNullOrEmpty(user.Password)) passwordField.SetText(user.Password);
     }
 
     public void VerifyInvalidInfo()

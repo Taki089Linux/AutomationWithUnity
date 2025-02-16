@@ -8,6 +8,9 @@ public enum EScence
     [Description("Taggle.HomePage")]
     HomeScence,
 
+    [Description("Taggle.Login.UserName")]
+    LoginUserNamePageScence,
+
     [Description("Taggle.Login")]
     LoginPageScence,
 }

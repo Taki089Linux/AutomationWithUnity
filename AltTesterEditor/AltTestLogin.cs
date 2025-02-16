@@ -1,12 +1,13 @@
 using NUnit.Framework;
+using System;
 public class AltTestLogin : BaseTest
 {
     #region Declare Field
     private WelComePage welComePage;
     private LoginPage loginPage;
-
-    private string _VALIDUSERNAME;
-    private string _VALIDPASSWORD;
+    private HomePage homePage;
+    private readonly string _VALIDUSERNAME = ConfigManager.GetConfigValue("username");
+    private readonly string _VALIDPASSWORD = ConfigManager.GetConfigValue("password");
     #endregion
 
     #region TestCase
@@ -27,9 +28,34 @@ public class AltTestLogin : BaseTest
         loginPage.Login(user);
 
         //Verify Login Successfully
-
+        homePage.VerifyLoginSuccessfully(user);
     }
 
+    [Test]
+    public void VerifyUserCannotLoginWithInvalidUsernameAndPassword()
+    {
+        //Navigate to Login Page
+        welComePage.NavigateToLoginPage();
+
+        //Login with valid info
+        var user = new UserModel()
+        {
+            Username = $"{_VALIDUSERNAME}_Invalid",
+            Password = $"{_VALIDPASSWORD}_Invalid"
+        };
+        loginPage.Login(user).VerifyInvalidInfo();
+    }
+
+    [Test]
+    public void VerifyuserCannotLoginWithEmptyUsernameAndPassword()
+    {
+        //Navigate to Login Page
+        welComePage.NavigateToLoginPage();
+
+        //Login with valid info
+        var user = new UserModel();
+        loginPage.Login(user).VerifyInvalidEmptyInfo();
+    }
     #endregion
 
     #region Test Init
@@ -38,9 +64,7 @@ public class AltTestLogin : BaseTest
     {
         welComePage = PageFactory.GetPage<WelComePage>();
         loginPage = PageFactory.GetPage<LoginPage>();
-
-        _VALIDUSERNAME = ConfigManager.GetConfigValue("username");
-        _VALIDPASSWORD = ConfigManager.GetConfigValue("password");
+        homePage = PageFactory.GetPage<HomePage>();
     }
     #endregion
 
